@@ -23,6 +23,8 @@ class _CallSampleState extends State<CallSample> {
   Session? _session;
   DesktopCapturerSource? selected_source_;
   bool _waitAccept = false;
+  bool _isMicMuted = false;
+  bool _isSpeakerPhoneOn = false;
 
   // ignore: unused_element
   _CallSampleState();
@@ -243,6 +245,16 @@ class _CallSampleState extends State<CallSample> {
 
   _muteMic() {
     _signaling?.muteMic();
+    setState(() {
+      _isMicMuted = !_isMicMuted;
+    });
+  }
+
+  void _toggleSpeakerPhone() async {
+    setState(() {
+      _isSpeakerPhoneOn = !_isSpeakerPhoneOn;
+    });
+    await Helper.setSpeakerphoneOn(_isSpeakerPhoneOn);
   }
 
   _buildRow(context, peer) {
@@ -294,7 +306,7 @@ class _CallSampleState extends State<CallSample> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _inCalling
           ? SizedBox(
-              width: 240.0,
+              width: 280.0,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -315,10 +327,17 @@ class _CallSampleState extends State<CallSample> {
                       backgroundColor: Colors.pink,
                     ),
                     FloatingActionButton(
-                      child: const Icon(Icons.mic_off),
+                      child: Icon(_isMicMuted ? Icons.mic_off : Icons.mic),
                       tooltip: 'Mute Mic',
                       onPressed: _muteMic,
-                    )
+                    ),
+                    // Earpiece/Speaker Phone
+                    // async call to setSpeakerphoneOn
+                    FloatingActionButton(
+                      child: Icon(Icons.volume_up),
+                      tooltip: 'Speaker Phone',
+                      onPressed: _toggleSpeakerPhone,
+                    ),
                   ]))
           : null,
       body: _inCalling

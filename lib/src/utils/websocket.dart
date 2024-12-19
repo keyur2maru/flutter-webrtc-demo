@@ -40,7 +40,7 @@ class SimpleWebSocket {
   Future<WebSocket> _connectForSelfSignedCert(url) async {
     try {
       Random r = new Random();
-      String key = base64.encode(List<int>.generate(8, (_) => r.nextInt(255)));
+      String key = base64.encode(List<int>.generate(16, (_) => r.nextInt(255)));
       HttpClient client = HttpClient(context: SecurityContext());
       client.badCertificateCallback =
           (X509Certificate cert, String host, int port) {
